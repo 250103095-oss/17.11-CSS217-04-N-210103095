@@ -1,0 +1,25 @@
+FlightBookingFacade.java
+
+I made the FlightBookingFacade class so that Main only talks to one class. It has five private fields, one for each subsystem, and the constructor creates all of them.
+The 8-parameter bookFlight just calls the 9-parameter one with “STANDARD”. This way old code still works.In the 9-parameter bookFlight, I set lockToken to null before try, so I can use it in catch. Then inside try:
+
+I connect to the seat server and lock the seat.
+If the tier is not SILVER or GOLD, I calculate the baggage fee. Otherwise the fee is 0.
+I convert the total to the passenger’s currency.
+I start the payment gateway. If the tier is SILVER, I apply the promo code. Then I charge the card.
+I make the ticket and return it.
+
+If anything fails, catch releases the seat (if it was locked) and returns “BOOKING_FAILED”. Finally always disconnects from the seat server.
+
+Main.java
+
+Main only creates FlightBookingFacade and calls bookFlight.
+
+Test 1: normal booking, works.
+Test 2: seat in row 13, fails without a crash.
+Test 3: bad card, the seat lock is released.
+Test 4: SILVER, no baggage fee and 10% off.
+
+Conclusion
+
+For the new rule I only changed the Facade. The subsystems stayed the same, and Main still doesn’t know about them.
